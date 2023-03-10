@@ -38,6 +38,27 @@ function playGame() external payable{//function play game which is external and 
 require(msg.value == 0, "Lottery: Finish current game before starting now one");  //let the first game to be finished if he send other ether to play we don't give him to play first finished the first game 
 require(blockhash(blockHashesToBeUsed[msg.sender]) != 0 , "Lottery: Block not mined yet"); //we also have to  check that the block is mined          that should not be zero if zero that means block is not mined yet
 
+///////////////////////////////////////////////
+//use future block hash 
+//first store the block number we later use on +2 for extra security  so you can know for sure thee block hash here not yet known at the time when you running this code  and later on 2nd transaction once the block with this number mined you can calculate the random number as the blockhash and convert into uint256 note            kepp in mind the check herer if randomnumber == 0    is actually essential because solidty can  only look back at   last 256 blocks so if for exmaple somene waits too long and this block number here (block.number+2) is already more then 256 blocks old then this block has would return 0  although its arleady a mint block so you have to handle this case especifically randomnumer==0
+
+//past block has we cannot use everyone no because it is already mined
+//if you try to read current and future block solidity returns 0 because they don't have hash yet because exist yet
+//we can do is we can use future block hash if we required multiple transaction 
+
+
+
+
+
+// No, that's not correct. Solidity can access the block hash of the 257th block, as well as any other block within the last 256 blocks. Solidity can only access the block hash of the block that is currently being mined and the block hashes of the last 256 blocks.
+
+// Once a block is added to the blockchain, its block hash is stored in the EVM's memory and is available for Solidity to access. Therefore, Solidity can access the block hash of the 257th block once it has been added to the blockchain and is within the last 256 blocks.
+
+// However, if the contract tries to access the block hash of a block that is more than 256 blocks old, the block hash will not be available, as it will have been removed from the EVM's memory. In this case, the blockhash() function will return 0, which indicates that the block hash is not available.
+
+// note ======== the block hash of a block that is more than 256 blocks old, the block hash will not be available,      so will the player wait for that time and actually want to win the lotterly unfairely as the hash value will 0 so in upper we have to put the case if hashvalue == 0 we shouldn't give or allow to enter the game 
+
+//////////////////////////////
 
 
 // 3. converting the hash into uint256
